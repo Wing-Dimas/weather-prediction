@@ -4,6 +4,7 @@ import streamlit as st
 import plotly.express as px
 import pickle
 import numpy as np
+import joblib
 
 px.defaults.template = "plotly_dark"
 px.defaults.color_continuous_scale = "reds"
@@ -64,10 +65,11 @@ def submit():
 
     inputs = np.array([[val for val in data_input.values()]])
 
-    with open("model.sav", "rb") as model_buffer:
-        model = pickle.load(model_buffer)
-        pred = model.predict(inputs)
-        st.text(pred)
+    model = joblib.load("model.joblib")
+    # with open("model.sav", "rb") as model_buffer:
+        # model = pickle.load(model_buffer)
+    pred = model.predict(inputs)
+    st.text(pred)
 
 
 submitted = st.sidebar.button("Submit")
