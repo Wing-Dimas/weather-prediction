@@ -27,7 +27,7 @@ st.header("Data Sample")
 
 st.header("Hasil")
 def submit():
-    with open("model.sav", "rb") as model_buffer:
+    with open("model.pickle", "rb") as model_buffer:
         # cek input 
         kpr_ya = 0
         kpr_tidak = 0
