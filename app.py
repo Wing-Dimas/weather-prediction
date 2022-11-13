@@ -27,44 +27,44 @@ st.header("Data Sample")
 
 st.header("Hasil")
 def submit():
-    with open("model.pickle", "rb") as model_buffer:
-        # cek input 
-        kpr_ya = 0
-        kpr_tidak = 0
-        if kpr == "aktif":
-            kpr_ya = 1
-        else:
-            kpr_tidak = 1
+    # cek input 
+    kpr_ya = 0
+    kpr_tidak = 0
+    if kpr == "aktif":
+        kpr_ya = 1
+    else:
+        kpr_tidak = 1
 
 
-        overdues = [0,0,0,0,0]
-        if(overdue == "0 - 30 days"):
-            overdues[0] = 1
-        elif(overdue == "31 - 45 days"):
-            overdues[1] = 1
-        elif(overdue == "46 - 60 days"):
-            overdues[2] = 1
-        elif(overdue == "61 - 90 days"):
-            overdues[3] = 1
-        else:
-            overdues[4] = 1
+    overdues = [0,0,0,0,0]
+    if(overdue == "0 - 30 days"):
+        overdues[0] = 1
+    elif(overdue == "31 - 45 days"):
+        overdues[1] = 1
+    elif(overdue == "46 - 60 days"):
+        overdues[2] = 1
+    elif(overdue == "61 - 90 days"):
+        overdues[3] = 1
+    else:
+        overdues[4] = 1
 
-        # create data input
-        data_input = {
-            "pendapatan_setahun_juta" : int(pendapatan_setahun),
-            "durasi_pinjaman_bulan" : int(durasi_pinjaman),
-            "jumlah_tanggungan" : int(jumlah_tanggungan),
-            "overdue_0 - 30 days": overdues[0],
-            "overdue_31 - 45 days": overdues[1],
-            "overdue_46 - 60 days": overdues[2],
-            "overdue_61 - 90 days": overdues[3],
-            "overdue_> 90 days": overdues[4],
-            "KPR_TIDAK" : kpr_tidak,
-            "KPR_YA": kpr_ya
-        }
+    # create data input
+    data_input = {
+        "pendapatan_setahun_juta" : int(pendapatan_setahun),
+        "durasi_pinjaman_bulan" : int(durasi_pinjaman),
+        "jumlah_tanggungan" : int(jumlah_tanggungan),
+        "overdue_0 - 30 days": overdues[0],
+        "overdue_31 - 45 days": overdues[1],
+        "overdue_46 - 60 days": overdues[2],
+        "overdue_61 - 90 days": overdues[3],
+        "overdue_> 90 days": overdues[4],
+        "KPR_TIDAK" : kpr_tidak,
+        "KPR_YA": kpr_ya
+    }
 
-        inputs = np.array([[val for val in data_input.values()]])
+    inputs = np.array([[val for val in data_input.values()]])
 
+    with open("model.sav", "rb") as model_buffer:
         model = pickle.load(model_buffer)
         pred = model.predict(inputs)
         st.text(pred)
