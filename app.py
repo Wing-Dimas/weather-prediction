@@ -21,7 +21,7 @@ st.dataframe(data)
 pendapatan_setahun = st.sidebar.text_input("Pendapatan Setahun(juta)")
 kpr = st.sidebar.radio("KPR", ("aktif", "tidak aktif"))
 jumlah_tanggungan = st.sidebar.text_input("Jumlah Tanggungan")
-durasi_pinjaman = st.sidebar.selectbox("Durasi (bulan)", ("12", "36", "48"))
+durasi_pinjaman = st.sidebar.selectbox("Durasi (bulan)", ("12", "24", "36", "48"))
 overdue = st.sidebar.selectbox("Overdue", ("0 - 30 days", "31 - 45 days", "46 - 60 days", "61 - 90 days", "> 90 days"))
 
 
