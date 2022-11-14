@@ -1,10 +1,8 @@
 import pandas as pd
-import pickle
 import streamlit as st
 import plotly.express as px
-import pickle
 import numpy as np
-import joblib
+from sklearn.utils.validation import joblib
 
 px.defaults.template = "plotly_dark"
 px.defaults.color_continuous_scale = "reds"
@@ -29,6 +27,9 @@ st.header("Data Sample")
 st.header("Hasil")
 def submit():
     # cek input 
+    scaler = joblib.load("scaler.save")
+    normalize = scaler.transform([[int(pendapatan_setahun),int(durasi_pinjaman), int(jumlah_tanggungan)]])[0].tolist()
+
     kpr_ya = 0
     kpr_tidak = 0
     if kpr == "aktif":
@@ -51,9 +52,9 @@ def submit():
 
     # create data input
     data_input = {
-        "pendapatan_setahun_juta" : int(pendapatan_setahun),
-        "durasi_pinjaman_bulan" : int(durasi_pinjaman),
-        "jumlah_tanggungan" : int(jumlah_tanggungan),
+        "pendapatan_setahun_juta" : normalize[0],
+        "durasi_pinjaman_bulan" : normalize[1],
+        "jumlah_tanggungan" : normalize[2],
         "overdue_0 - 30 days": overdues[0],
         "overdue_31 - 45 days": overdues[1],
         "overdue_46 - 60 days": overdues[2],
