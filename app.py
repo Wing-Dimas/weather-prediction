@@ -4,10 +4,15 @@ import plotly.express as px
 import numpy as np
 from sklearn.utils.validation import joblib
 
+# intial template
 px.defaults.template = "plotly_dark"
 px.defaults.color_continuous_scale = "reds"
 
+# create content
+st.title("Predict Credit Score")
+st.header("Data Sample")
 st.sidebar.title("Input Data")
+
 # read data
 data = pd.read_csv("https://raw.githubusercontent.com/Wing-Dimas/datamining/main/credit_score.csv")
 st.dataframe(data)
@@ -19,12 +24,9 @@ jumlah_tanggungan = st.sidebar.text_input("Jumlah Tanggungan")
 durasi_pinjaman = st.sidebar.selectbox("Durasi (bulan)", ("12", "36", "48"))
 overdue = st.sidebar.selectbox("Overdue", ("0 - 30 days", "31 - 45 days", "46 - 60 days", "61 - 90 days", "> 90 days"))
 
-# create content
-st.title("Credit Score")
-st.header("Data Sample")
 
-
-st.header("Hasil")
+# section output
+st.subheader("Hasil Predict Score")
 def submit():
     # cek input 
     scaler = joblib.load("scaler.save")
@@ -70,9 +72,10 @@ def submit():
     # with open("model.sav", "rb") as model_buffer:
         # model = pickle.load(model_buffer)
     pred = model.predict(inputs)
-    st.text(pred)
+    st.text("Risk Rating : " + str(pred))
 
 
+# create button submit
 submitted = st.sidebar.button("Submit")
 if submitted:
     submit()
