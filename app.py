@@ -9,70 +9,69 @@ px.defaults.template = "plotly_dark"
 px.defaults.color_continuous_scale = "reds"
 
 # create content
-st.title("Predict Credit Score")
+st.title("Weather Prediction")
+st.container()
+st.write("Website ini bertujuan untuk memprediksi cuaca yang akan terjadi, dengan menggunakan data yang terdapat pada datasets yanng sudah disediakan oleh orang lain")
 st.header("Data Sample")
 st.sidebar.title("Input Data")
 
 # read data
-data = pd.read_csv("https://raw.githubusercontent.com/Wing-Dimas/datamining/main/credit_score.csv")
-st.dataframe(data)
+df = pd.read_csv("https://raw.githubusercontent.com/Wing-Dimas/datamining/main/seattle-weather.csv")
+st.text("""
+menggunakan kolom:
+* precipitation     : jumlah endapan awan
+* tempmax           : jumlah temperatur maksimal
+* tempmin           : jumlah temperatur minimal
+* wind              : kecepatan angin
+cuaca yang akan di prediksi:
+* drizzle (gerimis)
+* rain (hujan)
+* sun (panas)
+* snow (salju)
+* fog (kabut)
+""")
+st.caption('link datasets : https://www.kaggle.com/datasets/ananthr1/weather-prediction')
+st.dataframe(df)
+row, col = df.shape
+st.caption(f"({row} rows, {col} cols)")
 
 # create input
-pendapatan_setahun = st.sidebar.text_input("Pendapatan Setahun(juta)")
-kpr = st.sidebar.radio("KPR", ("aktif", "tidak aktif"))
-jumlah_tanggungan = st.sidebar.text_input("Jumlah Tanggungan")
-durasi_pinjaman = st.sidebar.selectbox("Durasi (bulan)", ("12", "24", "36", "48"))
-overdue = st.sidebar.selectbox("Overdue", ("0 - 30 days", "31 - 45 days", "46 - 60 days", "61 - 90 days", "> 90 days"))
+precipitation = st.sidebar.number_input("precipitation (pengendapan)", 0.0, 60.0, step=0.1)
+temp_min = st.sidebar.number_input("temperatur min", -5.0, 50.0, step=0.1)
+temp_max = st.sidebar.number_input("temperatur max", -5.0, 50.0, step=0.1)
+wind = st.sidebar.number_input("wind (kecepatan angin)", 0.0, 20.0, step=0.1)
 
 
 # section output
-st.subheader("Hasil Predict Score")
+st.subheader("Hasil Predict Cuaca")
 def submit():
-    # cek input 
-    scaler = joblib.load("scaler.save")
-    normalize = scaler.transform([[int(pendapatan_setahun),int(durasi_pinjaman), int(jumlah_tanggungan)]])[0].tolist()
+    # input
+    inputs = np.array([[precipitation, temp_max, temp_min, wind]])
+    st.write(inputs)
 
-    kpr_ya = 0
-    kpr_tidak = 0
-    if kpr == "aktif":
-        kpr_ya = 1
-    else:
-        kpr_tidak = 1
+    # import label encoder
+    le = joblib.load("le.save")
+
+    # create 3 output
+    col1, col2, col3 = st.columns(3)
+    with col1:
+        model1 = joblib.load("nb.joblib")
+        y_pred1 = model1.predict(inputs)
+        col1.subheader("Gaussian Naive Bayes")
+        col1.write(f"Result : {le.inverse_transform(y_pred1)[0]}")
 
 
-    overdues = [0,0,0,0,0]
-    if(overdue == "0 - 30 days"):
-        overdues[0] = 1
-    elif(overdue == "31 - 45 days"):
-        overdues[1] = 1
-    elif(overdue == "46 - 60 days"):
-        overdues[2] = 1
-    elif(overdue == "61 - 90 days"):
-        overdues[3] = 1
-    else:
-        overdues[4] = 1
+    with col2:
+        model2 = joblib.load("knn.joblib")
+        y_pred2 = model2.predict(inputs)
+        st.subheader("k-nearest neighbors")
+        col2.write(f"Result : {le.inverse_transform(y_pred2)[0]}")
 
-    # create data input
-    data_input = {
-        "pendapatan_setahun_juta" : normalize[0],
-        "durasi_pinjaman_bulan" : normalize[1],
-        "jumlah_tanggungan" : normalize[2],
-        "overdue_0 - 30 days": overdues[0],
-        "overdue_31 - 45 days": overdues[1],
-        "overdue_46 - 60 days": overdues[2],
-        "overdue_61 - 90 days": overdues[3],
-        "overdue_> 90 days": overdues[4],
-        "KPR_TIDAK" : kpr_tidak,
-        "KPR_YA": kpr_ya
-    }
-
-    inputs = np.array([[val for val in data_input.values()]])
-
-    model = joblib.load("model.joblib")
-    # with open("model.sav", "rb") as model_buffer:
-        # model = pickle.load(model_buffer)
-    pred = model.predict(inputs)
-    st.text("Risk Rating : " + str(pred))
+    with col3:
+        model3 = joblib.load("tree.joblib")
+        y_pred3 = model3.predict(inputs)
+        st.subheader("Decision Tree")
+        col3.write(f"Result : {le.inverse_transform(y_pred3)[0]}")
 
 
 # create button submit
