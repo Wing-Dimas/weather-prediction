@@ -1,6 +1,5 @@
 import streamlit as st
 import pandas as pd
-import numpy as np
 
 def home():
     st.title("Weather Prediction")
@@ -26,5 +25,3 @@ def home():
     st.caption(f"({row} rows, {col} cols)")
 
     st.session_state["data"] = df
-
-    st.write(st.session_state)

@@ -1,1 +1,4 @@
-/datamining
+/env/
+/.vscode/
+/__pycache__/
+/pages/__pycache__/
